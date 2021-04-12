@@ -11,7 +11,7 @@ COPY modsec.conf /var/www/html/
 
 #Instalación de paquestes
 RUN apt-get update -y -qq >/dev/null \
-    && apt-get install -y nano bison build-essential ca-certificates curl dh-autoreconf doxygen flex gawk git iputils-ping libcurl4-gnutls-dev libexpat1-dev libgeoip-dev liblmdb-dev libpcre3-dev libpcre++-dev libssl-dev libtool libxslt1-dev libgd-dev libxml2 libxml2-dev libyajl-dev locales lua5.3-dev pkg-config wget zlib1g-dev zlibc nginx php7.3-fpm >/dev/null \
+    && apt-get install -y nano bison build-essential ca-certificates curl dh-autoreconf doxygen flex gawk git iputils-ping libcurl4-gnutls-dev libexpat1-dev libgeoip-dev liblmdb-dev libpcre3-dev libpcre++-dev libssl-dev libtool libxml2 libxml2-dev libyajl-dev locales lua5.3-dev pkg-config wget zlib1g-dev zlibc nginx php7.3-fpm >/dev/null \
     && apt-get purge --auto-remove \
     && apt-get clean \
     && rm -r /var/lib/apt/lists/* \
@@ -21,7 +21,6 @@ RUN apt-get update -y -qq >/dev/null \
 #Copia de los archivos de la página, el entrypoint, el fichero de configuración de apache y el fichero de configuración de modsecurity
 COPY public_html /var/www/html/public_html
 COPY index.php /var/www/html/index.php
-#COPY entrypoint.sh /var/www/html/
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY modsecurity.conf-recommened /etc/nginx/modsec/modsecurity.conf
 COPY main.conf /etc/nginx/modsec/main.conf
@@ -31,9 +30,7 @@ COPY ssl-cert-snakeoil.key /etc/nginx/ssl/ssl-cert-snakeoil.key
 
 
 RUN chmod 400 /etc/nginx/ssl/ssl-cert-snakeoil.key \
-    && ldconfig 
-    #&& service php7.3-fpm start \
-    #&& service nginx start
+    && ldconfig
 
 #Indicar el entrypoint
-#CMD ["./entrypoint.sh"]
+CMD service php7.3-fpm start && nginx -g "daemon off;"
